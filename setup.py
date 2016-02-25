@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 from codecs import open
 from os import path
 __path = path.abspath(path.dirname(__file__))
@@ -8,7 +8,7 @@ with open(path.join(__path, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='query_collections',
-    version='0.0.1.0a1',
+    version='0.0.1.1a1',
 
     description='A set of classes built for easier management of Python maps and lists',
     long_description=readme_desc,
@@ -28,7 +28,7 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     keywords='json dictionary management query selection',
-    packages=find_packages(exclude=['tests']),
+    packages=['query_collections'],
     extras_require={
         'test': ['unittest'],
     }
