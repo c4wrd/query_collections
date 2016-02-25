@@ -140,6 +140,9 @@ Roadmap
 -  Equality operator for basic comparisons
 -  Equality comparator
 
+
+.. _Release Notes: https://github.com/c4wrd/query_collections/blob/master/REL_Notes.rst
+
 License
 -------
 
