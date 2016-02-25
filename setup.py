@@ -8,7 +8,7 @@ with open(path.join(__path, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='query_collections',
-    version='0.0.1.1a1',
+    version='0.0.1.1a2',
 
     description='A set of classes built for easier management of Python maps and lists',
     long_description=readme_desc,

@@ -23,8 +23,6 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 """
-from functools import partialmethod
-
 
 class exceptions:
     class InvalidQueryException(Exception):
@@ -67,8 +65,6 @@ class query_list(list):
     def len(self):
         return self.__len__()
 
-    length = partialmethod(len)
-
     def query(self, query_string):
         """
         Performs a query search with 'query_string' as the search
@@ -77,9 +73,6 @@ class query_list(list):
         :return: object(s) if exists, otherwise exception is thrown
         """
         return search(self, query_string)
-
-    def memeq(self, value):
-        pass
 
 
 from query_collections.query_search import search
