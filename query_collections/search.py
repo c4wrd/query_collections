@@ -217,7 +217,7 @@ def handle_wildcard(component, search_queue):
             """
             continue
 
-    return results
+    return query_collections.query_structs.query_list(results)
 
 
 def exists(component, query_component):
