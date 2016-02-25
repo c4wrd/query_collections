@@ -119,6 +119,12 @@ def handle_wildcard(component, search_deque):
     :param search_deque: search deque to perform search with
     :return:
     """
+
+    # if there is no search deque, this must have been reached
+    # where we want all children of a specified condition
+    if not search_deque:
+        return component
+
     results = []
     item_list = None  # for clarity purposes
 
@@ -135,7 +141,7 @@ def handle_wildcard(component, search_deque):
         If we are a map, we want to perform the search on
         each value in our key,value map and return the matches
         """
-        item_list = component.values()
+        item_list = component.items()
     else:
         if search_deque:
             raise SyntaxError(

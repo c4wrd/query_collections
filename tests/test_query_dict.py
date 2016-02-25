@@ -58,6 +58,15 @@ class TestQueryDict(unittest.TestCase):
         result = contents.query("errors:*:code!:code")
         self.assertEqual([100,101], result)
 
+    def testInitialWildcard(self):
+        result = contents.query("*")
+        self.assertEqual(contents, result)
+
+    def testQueryForExistingItems(self):
+        result = contents.query("errors:*:code!:*")
+        for item in result:
+            self.assertIn(item, [contents.errors[0],contents.errors[1]])
+
     def testWildcard(self):
         result = contents.query("errors:*")
         self.assertEqual(contents.errors, result)
