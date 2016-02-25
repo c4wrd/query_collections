@@ -1,6 +1,7 @@
-from setuptools import setup
 from codecs import open
 from os import path
+from setuptools import setup
+
 __path = path.abspath(path.dirname(__file__))
 
 with open(path.join(__path, 'README.rst'), encoding='utf-8') as f:
@@ -8,7 +9,7 @@ with open(path.join(__path, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='query_collections',
-    version='0.0.1.1a3',
+    version='0.0.1.2a2',
 
     description='A set of classes built for easier management of Python maps and lists',
     long_description=readme_desc,

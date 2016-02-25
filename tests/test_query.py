@@ -1,6 +1,7 @@
 import unittest
-from query_collections import query_dict
+
 from query_collections import exceptions
+from query_collections import query_dict
 
 contents = query_dict({
     "status": "FAILURE",
@@ -40,7 +41,7 @@ class TestQueryDict(unittest.TestCase):
 
     def testQueryMemberChildList(self):
         result = contents.query("user_stats:most_recent_login_ids")
-        self.assertEqual([100,200,300], result)
+        self.assertEqual([100, 200, 300], result)
 
     def testQueryMemberChildDict(self):
         result = contents.query("user_stats")
@@ -56,7 +57,7 @@ class TestQueryDict(unittest.TestCase):
         # ensures we can retrieve a list of members from a list
         # where the member exists
         result = contents.query("errors:*:code!:code")
-        self.assertEqual([100,101], result)
+        self.assertEqual([100, 101], result)
 
     def testInitialWildcard(self):
         result = contents.query("*")
@@ -65,7 +66,7 @@ class TestQueryDict(unittest.TestCase):
     def testQueryForExistingItems(self):
         result = contents.query("errors:*:code!:*")
         for item in result:
-            self.assertIn(item, [contents.errors[0],contents.errors[1]])
+            self.assertIn(item, [contents.errors[0], contents.errors[1]])
 
     def testWildcard(self):
         result = contents.query("errors:*")
@@ -77,4 +78,3 @@ class TestQueryDict(unittest.TestCase):
             self.fail()
         except exceptions.InvalidQueryException:
             pass
-

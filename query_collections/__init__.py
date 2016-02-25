@@ -24,61 +24,13 @@
     SOFTWARE.
 """
 
-class exceptions:
-    class InvalidQueryException(Exception):
-        pass
-
-
-class query_dict(dict):
-    """
-    We need delattr and setattr in order to set and delete members
-    in a fashion such as dict_instance.name = "cory"
-    """
-    __delattr__ = dict.__delattr__
-    __setattr__ = dict.__setattr__
-
-    def __getattr__(self, item):
-        item = self.get(item)
-
-        if item:
-            if isinstance(item, list):
-                return query_list(item)
-            elif isinstance(item, dict):
-                return query_dict(item)
-            else:
-                return item
-        else:
-            return None
-
-    def query(self, query_string):
-        """
-        Performs a query search with 'query_string' as the search
-        string
-        :param query_string: Search string to access desired member(s)
-        :return: object(s) if exists, otherwise exception is thrown
-        """
-        return search(self, query_string)
-
-
-class query_list(list):
-    @property
-    def len(self):
-        return self.__len__()
-
-    def query(self, query_string):
-        """
-        Performs a query search with 'query_string' as the search
-        string
-        :param query_string: Search string to access desired member(s)
-        :return: object(s) if exists, otherwise exception is thrown
-        """
-        return search(self, query_string)
-
-
-from query_collections.query_search import search
+from query_collections import exceptions
+from query_collections.query_structs import query_list, query_dict
+from query_collections.search import query
 
 __all__ = (
     'query_list',
     'query_dict',
-    'exceptions'
+    'exceptions',
+    'query'
 )
