@@ -132,6 +132,11 @@ def handle_basic_member(component, query_component):
     :param query_component: QueryNode to search for
     :return: value of component if it exists, otherwise throws exception
     """
+
+    # if we receive a tuple, tuple[0] = key, tuple[1] = value
+    if isinstance(component, tuple):
+        component = component[1]
+
     if isinstance(component, list):
         try:
             index = int(query_component.value)
