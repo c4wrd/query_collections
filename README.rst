@@ -90,7 +90,8 @@ the member exists.
 Combination of rules is also acceptable: - The wildcard by default stops
 error reporting and returns all matching elements following itself in
 the query string. For example: .query("\*:id!") returns all members of
-the first level where id exists
+the first level where id exists. We can also perform queries by using the
+index operators and prefixing a question mark.
 
 Examples:
 ---------

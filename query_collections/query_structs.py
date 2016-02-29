@@ -17,8 +17,10 @@ class query_dict(dict):
     __setattr__ = dict.__setattr__
 
     def __getattr__(self, item):
-        item = self.get(item)
+        return self.get(item)
 
+    def get(self, k, d=None):
+        item = super().get(k, d)
         if item:
             if isinstance(item, list):
                 return query_list(item)
@@ -28,6 +30,22 @@ class query_dict(dict):
                 return item
         else:
             return None
+
+    def __getitem__(self, item):
+        """
+        Allows us to execute queries on a dict or list by simply
+        adding a '?' before the query when using braces to access
+        a member. If a question mark is not present, assume
+        that we are attempting to access a member of the dict.
+
+        e.g.: queried_item = dict_instance['?list:0']
+        """
+        if isinstance(item, str):
+            if item.find('?', 0, 1) == 0:
+                return self.query(item[1:])
+
+        # otherwise act as normal
+        return self.get(item)
 
     def query(self, query_string):
         """
@@ -50,6 +68,23 @@ class query_list(list):
     @property
     def len(self):
         return self.__len__()
+
+    def __getitem__(self, item):
+        """
+        Allows us to execute queries on a dict or list by simply
+        adding a '?' before the query when using braces to access
+        a member. If a question mark is not present, assume
+        that we are attempting to access a member of the dict.
+
+        e.g.: queried_item = dict_instance['?list:0']
+        """
+        if isinstance(item, str):
+            if item.find('?', 0, 1) == 0:
+                return self.query(item[1:])
+
+        # otherwise act as normal
+        return super().__getitem__(item)
+
 
     def query(self, query_string):
         """

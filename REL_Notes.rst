@@ -7,6 +7,12 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+2a(7)
+-----
+ - We can now query an item with the index operators! When accesing elements of a query_dict or query_list
+    with the index operators (braces), you can prefix the index value (a string!) with '?' and it will
+    perform a query instead of accessing that element.
+
 2a(5)
 -----
  - Fixed issue where wildcard returns list instead of a query_list, preventing further query chains.

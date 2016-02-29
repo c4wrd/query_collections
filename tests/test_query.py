@@ -78,3 +78,18 @@ class TestQueryDict(unittest.TestCase):
             self.fail()
         except exceptions.InvalidQueryException:
             pass
+
+    def testIndexQueryOperator(self):
+        result = contents['?errors:*']
+        self.assertEqual(contents.errors, result)
+
+        norm = contents['errors']
+        self.assertEqual(contents.errors, norm)
+
+    def testIndexQueryList(self):
+        list_instance = contents.errors
+        result = list_instance['?*']
+        self.assertEqual(contents.errors, result)
+
+        norm = contents.errors[0]
+        self.assertEqual(list.__getitem__(contents.errors, 0), norm)
