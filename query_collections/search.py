@@ -2,7 +2,7 @@ import copy
 from collections import deque
 
 import query_collections.query_structs
-from .exceptions import InvalidQueryException, EmptyQueryException
+from .exceptions import InvalidQueryException, EmptyQueryException, InvalidFilterException
 
 
 class NodeType:
@@ -15,6 +15,7 @@ class NodeType:
     BASIC_MEMBER = 0
     WILD_CARD = 1
     EXIST = 2
+    FILTER_OBJ = 3
 
 
 class QueryNode:
@@ -25,6 +26,7 @@ class QueryNode:
     """
     node_type = None  # NodeType
     value = None
+    filter_index = None
 
     def __init__(self, search_string):
         node_type = classify(search_string)
@@ -32,6 +34,14 @@ class QueryNode:
             self.value = search_string
         elif node_type is NodeType.EXIST:
             self.value = search_string.split('!')[0]
+        elif node_type is NodeType.FILTER_OBJ:
+            values = search_string.split("$")
+            self.value = values[0]  # member to search
+            if values[1] != '':
+                self.filter_index = int(values[1])  # filter index
+            else:
+                self.filter_index = 0
+
         else:
             self.value = '*'  # NodeType.wildcard
         self.node_type = node_type
@@ -48,6 +58,8 @@ def classify(query_component_string):
         return NodeType.WILD_CARD
     elif query_component_string.find("!") != -1:
         return NodeType.EXIST
+    elif query_component_string.find("$") != -1:
+        return NodeType.FILTER_OBJ
     else:
         return NodeType.BASIC_MEMBER
 
@@ -67,22 +79,25 @@ def make_search_queue(query_string):
     return result
 
 
-def query(item, search_string):
+def query(item, search_string, filters=None):
     """
     Perform a query on a given 'list' or 'dict' type.
     It returns the to be queried information.
-    :param item:
-    :param search_string:
+    :param item: The item to be queried
+    :param search_string: The search string query
+    :param filter: A callback (or list of callbacks) that filters results within the search query,
+    is also used if the filter operator is found within the query string
     :return: The item to be searched for by the given search string.
     :throws: InvalidQueryException if the query is invalid (syntax error or query is empty)
     """
     if search_string is None or search_string == '':
         raise EmptyQueryException
     search_deque = make_search_queue(search_string)
-    return recursive_query_search(item, search_deque)
+    result = recursive_query_search(item, search_deque, filters=filters if isinstance(filters, list) else [filters])
+    return result
 
 
-def recursive_query_search(item, search_deque):
+def recursive_query_search(item, search_deque, filters=None):
     """
     Recursively performs a query on an object. This is to be used
     in conjunction with 'query', and should not be invoked directly.
@@ -109,19 +124,29 @@ def recursive_query_search(item, search_deque):
         We want to continue searching, if it is the desired member it will
         reach our base case
         """
-        return recursive_query_search(Handlers[NodeType.BASIC_MEMBER](item, query_component), search_deque)
+        return recursive_query_search(Handlers[NodeType.BASIC_MEMBER](item, query_component), search_deque, filters)
 
     elif query_component.node_type == NodeType.WILD_CARD:
         """
         We want to search each member of the current item with the search_deque
         """
-        return Handlers[NodeType.WILD_CARD](item, search_deque)
+        return Handlers[NodeType.WILD_CARD](item, search_deque, filters)
 
     elif query_component.node_type == NodeType.EXIST:
         """
         We want to return True if the item exists, otherwise False
         """
-        return Handlers[NodeType.EXIST](item, query_component, search_deque)
+        return Handlers[NodeType.EXIST](item, query_component, search_deque, filters)
+
+    elif query_component.node_type == NodeType.FILTER_OBJ:
+        """
+        Return where is returned successfully by the filter
+        """
+        matches = Handlers[NodeType.FILTER_OBJ](item, query_component, filters)
+        if search_deque:
+            return recursive_query_search(matches, search_deque, filters)
+        else:
+            return matches
 
 
 def handle_basic_member(component, query_component):
@@ -158,7 +183,7 @@ def handle_basic_member(component, query_component):
             "Attempted to perform a query on member %s which was not a map or a list!" % query_component.value)
 
 
-def handle_wildcard(component, search_queue):
+def handle_wildcard(component, search_queue, filters=None):
     """
     If we receive a wildcard we want to search all possible members of the
     inputted 'dict' or 'list' object. If it does not exist, it will return an empty list.
@@ -208,8 +233,9 @@ def handle_wildcard(component, search_queue):
 
     for item in item_list:
         try:
-            result = recursive_query_search(item, copy.copy(search_queue))
-            results.append(result)
+            result = recursive_query_search(item, copy.copy(search_queue), filters=filters)
+            if result is not None:
+                results.append(result)
         except:
             """
             If the item did not have a query matching value,
@@ -228,7 +254,7 @@ def exists(component, query_component):
         return False
 
 
-def handle_exist(item, query_component, search_queue):
+def handle_exist(item, query_component, search_queue, filters=None):
     """
     Checks if a queried component exists. If there is a search queue,
     it means we will continue to recursively search for underlying members should it exist,
@@ -246,7 +272,7 @@ def handle_exist(item, query_component, search_queue):
     """
     if search_queue:
         if exists(item, query_component):
-            return recursive_query_search(item, search_queue)
+            return recursive_query_search(item, search_queue, filters=filters)
         else:
             raise InvalidQueryException("Attempted to search for a value after %s, but %s did not exist" % (
                 query_component.value, query_component.value))
@@ -254,8 +280,50 @@ def handle_exist(item, query_component, search_queue):
         return exists(item, query_component)
 
 
+def handle_filter(member, query_component, filters):
+    """
+    Filters a list or object and returns the matching items
+
+    Can be performed with the following syntax
+
+    instance.query("list:errors:code$", filters=filters.eq(100)), will return
+    all errors in list where the code is equal to 100.
+
+    Alternatively, if you have multiple filters:
+    instance.query("list:errors:code$0:*:code$1", [filters.eq(100), filters.less(500)) will return a list of errors
+    whose code is equal to 100, but less than 500 (by default will still be all, just for example.
+    """
+
+    if not isinstance(filters, list) or len(filters) == 0:
+        raise InvalidFilterException
+
+    try:
+        filter_cb = filters[query_component.filter_index]
+    except IndexError:
+        raise InvalidFilterException("%s was not a valid value for filtering! It should be an index!")
+
+    if not callable(filter_cb):
+        raise InvalidFilterException
+
+    if isinstance(member, list):
+        results = query_collections.query_structs.query_list()
+        for i in member:
+            item = i[query_component.value]
+            if filter_cb(item):
+                results.append(item)
+    else:
+        item = member.get(query_component.value)
+        if filter_cb(item):
+            return member
+        else:
+            return None
+
+    return results
+
+
 Handlers = {
     NodeType.BASIC_MEMBER: handle_basic_member,
     NodeType.WILD_CARD: handle_wildcard,
-    NodeType.EXIST: handle_exist
+    NodeType.EXIST: handle_exist,
+    NodeType.FILTER_OBJ: handle_filter
 }

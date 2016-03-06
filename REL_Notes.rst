@@ -7,6 +7,11 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+2a(8)
+_____
+ - Added basic implementation of list filtering, which allows us to query lists or items that match specific criteria.
+ View the readme for updated tutorial on how to filter.
+
 2a(7)
 -----
  - We can now query an item with the index operators! When accesing elements of a query_dict or query_list

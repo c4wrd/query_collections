@@ -2,6 +2,7 @@ import unittest
 
 from query_collections import exceptions
 from query_collections import query_dict
+from query_collections import filters
 
 contents = query_dict({
     "status": "FAILURE",
@@ -31,6 +32,10 @@ contents = query_dict({
 
 
 class TestQueryDict(unittest.TestCase):
+    """
+    Tests to verify functionality of Query Collections.
+    Tests must ensure 100% code coverage!
+    """
     def testQueryTopLevelMember(self):
         result = contents.query("status")
         self.assertEqual('FAILURE', result)
@@ -73,11 +78,8 @@ class TestQueryDict(unittest.TestCase):
         self.assertEqual(contents.errors, result)
 
     def testEmptyQuery(self):
-        try:
+        with self.assertRaises(exceptions.InvalidQueryException) as ex:
             contents.query("")
-            self.fail()
-        except exceptions.InvalidQueryException:
-            pass
 
     def testIndexQueryOperator(self):
         result = contents['?errors:*']
@@ -93,3 +95,19 @@ class TestQueryDict(unittest.TestCase):
 
         norm = contents.errors[0]
         self.assertEqual(list.__getitem__(contents.errors, 0), norm)
+
+    def testFilterOperatorList(self):
+        matched_error = contents.errors[0]
+        result = contents.query("errors:*:code$", filters=filters.eq(100))[0]
+        self.assertEqual(result, matched_error)
+
+    def testFilterOperatorNoComparator(self):
+        with self.assertRaises(exceptions.InvalidFilterException) as ex:
+            matched_error = contents.errors[0]
+            result = contents.query("errors:code$")
+
+    def testInvalidFilterIndex(self):
+        with self.assertRaises(exceptions.InvalidFilterException) as ex:
+            matched_error = contents.errors[0]
+            result = contents.query("errors:0:code$2")
+

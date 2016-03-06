@@ -18,3 +18,10 @@ class EmptyQueryException(InvalidQueryException):
     Exception thrown if a query is found to be an empty string.
     """
     pass
+
+class InvalidFilterException(Exception):
+    """
+    Exception thrown if the specified filter callback is not a callable
+    method. If this is encountered, ensure you are not invoking your callback,
+    e.g.: filter=callback(), it should be: filter=callback
+    """

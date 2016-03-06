@@ -47,14 +47,16 @@ class query_dict(dict):
         # otherwise act as normal
         return self.get(item)
 
-    def query(self, query_string):
+    def query(self, query_string, filters=None):
         """
         Performs a query search with 'query_string' as the search
         string
         :param query_string: Search string to access desired member(s)
+        :param filters: Filter methods to perform on the result preceding
+        the filter operator
         :return: object(s) if exists, otherwise exception is thrown
         """
-        return query_collections.search.query(self, query_string)
+        return query_collections.search.query(self, query_string, filters=filters)
 
 
 class query_list(list):
@@ -85,12 +87,13 @@ class query_list(list):
         # otherwise act as normal
         return super().__getitem__(item)
 
-
-    def query(self, query_string):
+    def query(self, query_string, filters=None):
         """
         Performs a query search with 'query_string' as the search
         string
         :param query_string: Search string to access desired member(s)
+        :param filters: Filter methods to perform on the result preceding
+        the filter operator
         :return: object(s) if exists, otherwise exception is thrown
         """
-        return query_collections.search.query(self, query_string)
+        return query_collections.search.query(self, query_string, filters=filters)

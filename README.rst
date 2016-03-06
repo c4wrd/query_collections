@@ -93,6 +93,38 @@ the query string. For example: .query("\*:id!") returns all members of
 the first level where id exists. We can also perform queries by using the
 index operators and prefixing a question mark.
 
+Filtering
+---------
+
+As of release 0.0.1.2a8, we can now filter lists to search for children
+that meet certain filters. This is a simple implementation,
+but should meet demands for this use case. Storing values inside a string
+was not an idea I supported (i.e., performing "eq=13"), and as such,
+filters are added an extension to the query method. You can either pass a
+single filter, or multiple (as an array), and filters can be accesed within
+the query string with the '$' operator, which follows this syntax: member$filterIndex.
+If you only have one filter, there is no need to do member$0, you can simply do: member$
+Example:
+
+For a problem, we need to filter a list of students to find students with a GPA > 3.0.
+It is simply done as:
+
+.. code::
+
+        results = students.query("*:GPA$", filters.greaterEqual(3.0))
+        # returns list of students with GPA > 3.0
+
+Multiple queries (to find list of students where GPA > 3.0 and attendance > 90.0:
+
+.. code::
+
+        results = students.query("*:GPA$0:*:ATTENDANCE_PCT$1",
+            filters.greaterEqual(3.0),  # filter at index '$0'
+            filters.greaterEqual(90.0)  # filter at index '$1'
+        )
+            # returns list of students with GPA > 3.0 and attendance > 90.0
+
+
 Examples:
 ---------
 
@@ -135,8 +167,8 @@ query len/length
     >>> mlist.length
     3
 
-Roadmap
--------
+Roadmap:
+--------
 
 -  Equality operator for basic comparisons
 -  Equality comparator
