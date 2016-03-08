@@ -7,6 +7,10 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+2a(9)
+_____
+ - Fixed query_dict setattr and delattr methods, previously unworking.
+
 2a(8)
 _____
  - Added basic implementation of list filtering, which allows us to query lists or items that match specific criteria.

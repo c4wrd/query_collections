@@ -111,3 +111,10 @@ class TestQueryDict(unittest.TestCase):
             matched_error = contents.errors[0]
             result = contents.query("errors:0:code$2")
 
+    def testQueryDotOperator(self):
+        q = query_dict(test="test", val="remove")
+        q.test = "updated"
+        self.assertEqual(q['test'], 'updated')
+        del q.val
+        self.assertEqual(None, q['val'])
+        self.assertEqual(None, q.val)

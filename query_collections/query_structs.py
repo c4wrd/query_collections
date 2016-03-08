@@ -13,8 +13,9 @@ class query_dict(dict):
     We need delattr and setattr in order to set and delete members
     in a fashion such as dict_instance.name = "cory"
     """
-    __delattr__ = dict.__delattr__
-    __setattr__ = dict.__setattr__
+
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
 
     def __getattr__(self, item):
         return self.get(item)
