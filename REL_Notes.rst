@@ -7,6 +7,10 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+2a(10)
+______
+ - Fixed issue where instance variables are not returned correctly
+
 2a(9)
 _____
  - Fixed query_dict setattr and delattr methods, previously unworking.

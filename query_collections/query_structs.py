@@ -17,9 +17,6 @@ class query_dict(dict):
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
-    def __getattr__(self, item):
-        return self.get(item)
-
     def get(self, k, d=None):
         item = super().get(k, d)
         if item:
@@ -31,6 +28,15 @@ class query_dict(dict):
                 return item
         else:
             return None
+
+    def __getattr__(self, item):
+        return self.get(item)
+
+    def __getattribute__(self, item):
+        recv_item = super().__getattribute__(item)
+        if not callable(recv_item) and item in self:
+            return self.get(item)
+        return recv_item
 
     def __getitem__(self, item):
         """
