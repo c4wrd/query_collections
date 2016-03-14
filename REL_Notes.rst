@@ -7,9 +7,17 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+3a(0)!
+______
+ - Streams are here! This is a 1 to 1 copy of the Java 8 Stream API and works wonderously! Very useful when combined
+ with lambda expressions! Most functionality exists, please feel free to open up tickets for issues that have been missed. As
+ for the default single threaded nature of Python, there is no parallel capabilities (as such, if you demand speed Python wouldn't
+ be the favored choice regardless)
+
+
 2a(9)
 _____
- - Fixed query_dict setattr and delattr methods, previously unworking.
+ - Fixed query_dict setattr and delattr methods, previously non-working.
 
 2a(8)
 _____

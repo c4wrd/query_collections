@@ -25,7 +25,7 @@
 """
 
 from query_collections import exceptions
-from query_collections.query_structs import query_list, query_dict
+from query_collections.query_structs import query_list, query_dict, Stream, Optional
 from query_collections.search import query
 from query_collections import filters
 
@@ -34,5 +34,7 @@ __all__ = (
     'query_dict',
     'exceptions',
     'query',
-    'filters'
+    'filters',
+    'Stream',
+    'Optional'
 )

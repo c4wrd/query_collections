@@ -124,6 +124,26 @@ Multiple queries (to find list of students where GPA > 3.0 and attendance > 90.0
         )
             # returns list of students with GPA > 3.0 and attendance > 90.0
 
+Streams
+-------
+
+As of release 0.0.1a3, the Stream class is now in beta. This is a copy of the
+Java 8 Stream API and nearly all functionality exists. You can create your own
+stream from your own type easily, and query_dict and query_list contain a method
+to create the stream.
+
+.. code::
+
+        results = Stream.of(1,2,3,4,5,6,7,8,9,10)
+        results.filter(lambda x: x > 5)\
+                .peek(lambda x: print(x))
+
+        OUT:
+            6
+            7
+            8
+            9
+            10
 
 Examples:
 ---------
