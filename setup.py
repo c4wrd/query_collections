@@ -10,7 +10,6 @@ with open(path.join(__path, 'README.rst'), encoding='utf-8') as f:
 setup(
     name='query_collections',
     version='0.0.1.3a0',
-
     description='A set of classes built for easier management of Python maps and lists',
     long_description=readme_desc,
     url='https://github.com/c4wrd/query_collections',

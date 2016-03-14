@@ -14,6 +14,9 @@ ______
  for the default single threaded nature of Python, there is no parallel capabilities (as such, if you demand speed Python wouldn't
  be the favored choice regardless)
 
+2a(10)
+______
+ - Fixed issue where instance variables are not returned correctly
 
 2a(9)
 _____
