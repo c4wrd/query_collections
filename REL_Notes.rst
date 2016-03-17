@@ -7,6 +7,10 @@ Releases are grouped by major, minor, version and listed by build:: MAJOR.MINOR.
 
 0.0.1 ALPHA
 ===========
+3a(1-2)
+_____
+ - Fixed issue with the Stream min, max, and forEach methods
+
 3a(0)!
 ______
  - Streams are here! This is a 1 to 1 copy of the Java 8 Stream API and works wonderously! Very useful when combined

@@ -244,7 +244,7 @@ class Stream(list):
         :param fn: Method to invoke with each member
         :return: This Stream instance
         """
-        return self
+        [fn(member) for member in self]
 
     def limit(self, maxSize):
         """
@@ -278,7 +278,7 @@ class Stream(list):
         """
         return Stream([int(item) for item in self])
 
-    def max(self, comparator=Comparators.default_max):
+    def max(self, key=None):
         """
         Returns the max element of this stream
         :param comparator: A comparator to perform the comparison
@@ -287,42 +287,22 @@ class Stream(list):
         """
 
         if len(self) == 0:
-            return Optional(None)
+            return Optional()
 
-        if comparator is Comparators.default_max:
-            return max(self)
-        else:
-            max_val = self[0]
+        return Optional(max(self, key=key))
 
-            try:
-                iterator = iter(self)
-                while iterator:
-                    max_val = comparator(max_val, iterator.__next__())
-            except StopIteration:
-                return Optional(max_val)
-
-    def min(self, comparator=Comparators.default_min):
+    def min(self, key=None):
         """
         Returns the min element of this stream
-        :param comparator: A comparator to perform the comparison
-        to find the min value.
+        :param key: Lambda expression used to perform the minimum operation,
+        passed to the builtin 'min' method.
         :return: An optional containing the min value.
         """
 
         if len(self) == 0:
             return Optional()
 
-        if comparator is Comparators.default_max:
-            return min(self)
-        else:
-            min_val = self[0]
-
-            try:
-                iterator = iter(self)
-                while iterator:
-                    min_val = comparator(min_val, iterator.__next__())
-            except StopIteration:
-                return Optional(min_val)
+        return Optional(min(self, key=key))
 
     def noneMatch(self, predicate_fn):
         """
