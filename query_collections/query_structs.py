@@ -140,6 +140,15 @@ class Optional:
     def get(self):
         return self.instance
 
+    def getAsInt(self):
+        return self.ifPresent(lambda val: int(val))
+
+    def getAsFloat(self):
+        return self.ifPresent(lambda val: float(val))
+
+    def getAsStr(self):
+        return self.ifPresent(lambda val: str(val))
+
     def ifPresent(self, consumer):
         if self.instance is not None:
             return consumer(self.instance)
@@ -172,9 +181,12 @@ class Stream(list):
     as made popular by the Java 8 Stream class.
     """
 
-    def __getitem__(self, index):
+    def __getitem__(self, index, pop=False):
         if index < self.__len__():
-            return super().__getitem__(index)
+            if pop:
+                return super().pop(index)
+            else:
+                return super().__getitem__(index)
         else:
             return None
 
@@ -230,13 +242,13 @@ class Stream(list):
         """
         return Optional(random.choice(self))
 
-    def findFirst(self):
+    def findFirst(self, pop=False):
         """
         Returns an optional containing the first element of this
         stream, should it exist.
         :return type: Optional
         """
-        return Optional(self.__getitem__(0))
+        return Optional(self.__getitem__(0, pop=pop))
 
     def forEach(self, fn):
         """
@@ -271,7 +283,7 @@ class Stream(list):
         """
         return Stream([float(item) for item in self])
 
-    def matToInt(self):
+    def mapToInt(self):
         """
         Maps each element of this stream to an integer
         :return: Stream
@@ -303,6 +315,9 @@ class Stream(list):
             return Optional()
 
         return Optional(min(self, key=key))
+
+    def next(self):
+        return self.findFirst(pop=True)
 
     def noneMatch(self, predicate_fn):
         """
@@ -338,7 +353,7 @@ class Stream(list):
         :param n: Position to start reading elements from.
         :return: Stream
         """
-        return Stream(itertools.islice(self, n))
+        return Stream(itertools.islice(self, n, self.length()))
 
     def sorted(self, **kwargs):
         """
